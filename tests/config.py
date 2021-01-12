@@ -6,7 +6,7 @@ CONFIG = {
                             #   ERROR   - Enable mail               （如果在dest中启用）
         'dest': {
             'stdout': 1, 
-            'file': 1, 
+            'file': 0, 
             'mail': 1       # 在mail中设置
         }
     },

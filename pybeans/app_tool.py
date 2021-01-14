@@ -60,7 +60,8 @@ class AppTool(object):
 
         if type(config) is dict:
             for key in config.keys():
-                full_key = (parent_key + '_' + re.sub(r'\W+', '_', key)).replace('-', '_').upper()
+                full_key = (parent_key + '_' + re.sub(r'\W+', '_', key)).upper()
+                #print(full_key)
                 if full_key in os.environ.keys():
                     config[key] = os.environ.get(full_key)
                 elif type(config[key]) in (list, dict, tuple):
@@ -68,6 +69,7 @@ class AppTool(object):
         elif type(config) is list:
             for index, _ in enumerate(config):
                 full_key = (parent_key + '_' + str(index)).upper()
+                #print(full_key)
                 if full_key in os.environ.keys():
                     config[index] = os.environ.get(full_key)
                 elif type(config[index]) in (list, dict, tuple):
@@ -105,8 +107,10 @@ class AppTool(object):
         except Exception:
             pass
         
-        env_key = re.sub(r'\W+', '_', self._app_name.upper())
-        env = os.environ.get(env_key + '_ENV')
+        regular_app_name = re.sub(r'\W+', '_', self._app_name.upper())
+        env_key = regular_app_name + '_ENV'        
+        env = os.environ.get(env_key)
+        
         if env:
             try:
                 config_test = __import__(config_name + f'_{env}').CONFIG
@@ -115,7 +119,7 @@ class AppTool(object):
                 pass
         
         if read_env:
-            self._use_env_var(self._config, self._app_name)
+            self._use_env_var(self._config, regular_app_name)
         return self._config
 
 

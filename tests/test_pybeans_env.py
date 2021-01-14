@@ -4,8 +4,7 @@ from pybeans import deep_merge, deep_merge_in, benchmark, is_win, is_linux, is_m
 from pybeans import random_sleep, dump_json, load_json, send_email, get
 from pybeans import AppTool, AppToolError
 
-from config import CONFIG
-from config_dev import CONFIG as CONFIG_DEV
+from tests import CONFIG, CONFIG_DEV
 
 
 class CoreTestCase(unittest.TestCase):
@@ -31,7 +30,6 @@ class CoreTestCase(unittest.TestCase):
 
         self.assertEqual(CONFIG_DEV['log']['level'], self.APP['log.level'])
         self.assertEqual(CONFIG_DEV['log']['dest'][0], self.APP['log.dest[0]'])
-
 
 if __name__ == '__main__':
     unittest.main()

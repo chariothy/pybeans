@@ -4,8 +4,7 @@ from pybeans import deep_merge, deep_merge_in, benchmark, is_win, is_linux, is_m
 from pybeans import random_sleep, dump_json, load_json, send_email, get
 from pybeans import AppTool, AppToolError
 
-from config import CONFIG
-from config_local import CONFIG as CONFIG_LOCAL
+from tests import CONFIG, CONFIG_LOCAL
 
 
 dict1 = {
@@ -41,15 +40,16 @@ dict3 = {
 class CoreTestCase(unittest.TestCase):
     def setUp(self):
         from os import environ as env
+        env['TEST_ING_ENV'] = '' # The first TESTING is app_name
         self.demo_value = 'DEMO_VALUE'
-        env['TESTING_DEMO_KEY'] = self.demo_value # The first TESTING is app_name
-        env['TESTING_DEMO_HOST'] = self.demo_value
-        env['TESTING_DEMO_KEY_FROM_0'] = self.demo_value
-        env['TESTING_DEMO_KEY_FROM_0_0'] = self.demo_value
+        env['TEST_ING_DEMO_KEY'] = self.demo_value # The first TESTING is app_name
+        env['TEST_ING_DEMO_HOST'] = self.demo_value
+        env['TEST_ING_DEMO_KEY_FROM_0'] = self.demo_value
+        env['TEST_ING_DEMO_KEY_FROM_0_0'] = self.demo_value
         
         self._write_email_to_file = env.get('MAIL_DEST') != 'mail'
 
-        self.APP_NAME = 'testing'
+        self.APP_NAME = 'test-ing'
         self.APP = AppTool(self.APP_NAME, os.getcwd())
         #print(self.APP.config)
         #print(env)
@@ -132,8 +132,8 @@ class CoreTestCase(unittest.TestCase):
         self.assertEqual(1, self.APP.get('mail.smtp.port.test', 1))
         
         self.assertEqual(CONFIG['demo.key2']['from'][0], self.APP['demo#key2.from[0]'])
-        self.assertRaises(AppToolError, lambda k: self.APP[k], 'demo#key.from[0]') # Because now demo.key is replaced by env
-
+        self.assertRaises(AppToolError, lambda k: self.APP[k], 'demo#key.from2[0]') # Because now demo.key is replaced by env
+        
         self.assertEqual(self.demo_value, self.APP['demo#key'])
         self.assertEqual(self.demo_value, self.APP['demo.host'])
 

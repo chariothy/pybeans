@@ -60,7 +60,7 @@ class AppTool(object):
 
         if type(config) is dict:
             for key in config.keys():
-                full_key = (parent_key + '_' + re.sub(r'\W+', '_', key)).upper()
+                full_key = (parent_key + '_' + re.sub(r'\W+', '_', key)).replace('-', '_').upper()
                 if full_key in os.environ.keys():
                     config[key] = os.environ.get(full_key)
                 elif type(config[key]) in (list, dict, tuple):

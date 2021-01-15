@@ -7,7 +7,9 @@ CONFIG = {
         'dest': {
             'stdout': 1, 
             'file': 1, 
-            'mail': 1       # 在mail中设置
+            'mail': 1       # 0     - 不使用； 
+                            # 1     - 使用，收件人使用mail中设置的to；
+                            # 字符串 - 直接指定收件人， Ex. : 'Henry TIAN <chariothy@gmail.com>'
         }
     },
     'mail': {

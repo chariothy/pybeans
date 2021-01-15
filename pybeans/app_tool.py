@@ -142,19 +142,25 @@ class AppTool(object):
         logLevel = logConfig.get('level', logging.DEBUG)
         logger.setLevel(logLevel)
 
-        logDest = logConfig.get('dest', [])
+        logDest = logConfig.get('dest', {})
 
-        if 'file' in logDest:
-            rf_handler = handlers.TimedRotatingFileHandler(path.join(logs_path, f'{self._app_name}.log'), when='D', interval=1, backupCount=7)
+        fileDest = logDest.get('file')
+        if str(fileDest) == '1':
+            regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
+            rf_handler = handlers.TimedRotatingFileHandler(path.join(logs_path, f'{regular_log_name}.log'), when='D', interval=1, backupCount=7)
             rf_handler.suffix = "%Y-%m-%d_%H-%M-%S.log"
             rf_handler.level = logging.INFO
             rf_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
             logger.addHandler(rf_handler)
 
-        if smtp and 'mail' in logDest:
+        mailDest = logDest.get('mail')
+        if smtp and str(mailDest) != '0':
             from_addr = mail.get('from')
             #TODO: Use schema to validate smtp
-            to_addrs = mail.get('to')
+            if str(mailDest) == '1':
+                to_addrs = mail.get('to')
+            else:   # Ex. 'Henry TIAN <chariothy@gmail.com>'
+                to_addrs = mailDest
 
             mail_handler = MySMTPHandler(
                     mailhost = (smtp['host'], smtp['port']),
@@ -165,7 +171,8 @@ class AppTool(object):
             mail_handler.setLevel(logging.ERROR)
             logger.addHandler(mail_handler)
 
-        if 'stdout' in logDest:
+        stdoutDest = logDest.get('stdout')
+        if str(stdoutDest) == '1':
             st_handler = logging.StreamHandler()
             st_handler.level = logging.DEBUG
             st_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))

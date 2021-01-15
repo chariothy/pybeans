@@ -421,3 +421,25 @@ def now():
 
 def today():
     return time.strftime("%Y-%m-%d", time.localtime())
+
+
+def get_abs_dir(dir:str): 
+    return os.path.split(os.path.realpath(dir))[0]
+
+
+def print_logo(logo_dir:str = __file__):
+    """
+    print logo for fun
+    """
+    logo_path = os.path.join(get_abs_dir(logo_dir), 'logo')
+    if os.path.exists(logo_path):
+        os.system(f'cat {logo_path}')
+
+
+def print_author(author_dir:str = __file__):
+    """
+    print author for fun
+    """
+    logo_path = os.path.join(get_abs_dir(author_dir), 'author')
+    if os.path.exists(logo_path):
+        os.system(f'cat {logo_path}')

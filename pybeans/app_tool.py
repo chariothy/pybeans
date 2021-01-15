@@ -36,6 +36,11 @@ class AppTool(object):
 
 
     @property
+    def name(self):
+        return self._app_name
+
+
+    @property
     def config(self):
         return self._config
 

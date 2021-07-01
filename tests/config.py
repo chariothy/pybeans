@@ -22,6 +22,7 @@ CONFIG = {
     },
     'demo': {
         'host': 'smtp.gmail.com',
+        'type': 1   # Env中读取出来的都是字符串，这里测试将Env中的值自动转换类型
     },
     'demo.key': {
         'from': ['Henry TIAN', 'chariothy@gmail.com'],

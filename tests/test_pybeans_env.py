@@ -29,7 +29,7 @@ class CoreTestCase(unittest.TestCase):
         self.assertEqual(CONFIG_DEV['mail']['to'][0][0], self.APP.get('mail.to[0][0]'))
 
         self.assertEqual(CONFIG_DEV['log']['level'], self.APP['log.level'])
-        self.assertEqual(CONFIG_DEV['log']['dest'][0], self.APP['log.dest[0]'])
+        self.assertEqual(CONFIG_DEV['log']['dest']['file'], self.APP['log.dest.file'])
 
 if __name__ == '__main__':
     unittest.main()

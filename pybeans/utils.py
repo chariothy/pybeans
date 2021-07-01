@@ -443,3 +443,16 @@ def print_author(author_dir:str = __file__):
     logo_path = os.path.join(get_abs_dir(author_dir), 'author')
     if os.path.exists(logo_path):
         os.system(f'cat {logo_path}')
+        
+        
+def cast(original_val, str_val:str):
+    """Cast simple type from character
+    Ex. int, float, bool, complex
+    """
+    simple_type = type(original_val)
+    if simple_type == str:
+        return str_val
+    elif simple_type in (int, float, bool, complex):
+        return simple_type(str_val)
+    else:
+        raise ValueError(f'Expect int/float/bool/complex, get {simple_type}')

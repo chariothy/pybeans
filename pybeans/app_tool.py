@@ -6,9 +6,10 @@ from logging import handlers
 import functools
 import time
 import re
+import builtins
 from typing import Union
 
-from .utils import deep_merge, send_email, get
+from .utils import deep_merge, send_email, get, cast
 from .exception import AppToolError
 
 
@@ -68,15 +69,23 @@ class AppTool(object):
                 full_key = (parent_key + '_' + re.sub(r'\W+', '_', key)).upper()
                 #print(full_key)
                 if full_key in os.environ.keys():
-                    config[key] = os.environ.get(full_key)
+                    try:
+                        config[key] = cast(config[key], os.environ.get(full_key))
+                    except ValueError as ex:
+                        print('parent-key:', parent_key, 'key:', key, 'fullkey:', full_key)
+                        raise ex
                 elif type(config[key]) in (list, dict, tuple):
                     config[key] = self._use_env_var(config[key], full_key)
         elif type(config) is list:
             for index, _ in enumerate(config):
-                full_key = (parent_key + '_' + str(index)).upper()
+                full_key = f'{parent_key}_{index}'.upper()
                 #print(full_key)
                 if full_key in os.environ.keys():
-                    config[index] = os.environ.get(full_key)
+                    try:
+                        config[index] = cast(config[index], os.environ.get(full_key))
+                    except ValueError as ex:
+                        print('parent-key:',parent_key, 'index:', index, 'fullkey:', full_key)
+                        raise ex
                 elif type(config[index]) in (list, dict, tuple):
                     config[index] = self._use_env_var(config[index], full_key)
         return config
@@ -150,7 +159,7 @@ class AppTool(object):
         logDest = logConfig.get('dest', {})
 
         fileDest = logDest.get('file')
-        if str(fileDest) == '1':
+        if fileDest == 1:
             regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
             rf_handler = handlers.TimedRotatingFileHandler(path.join(logs_path, f'{regular_log_name}.log'), when='D', interval=1, backupCount=7)
             rf_handler.suffix = "%Y-%m-%d_%H-%M-%S.log"
@@ -159,10 +168,10 @@ class AppTool(object):
             logger.addHandler(rf_handler)
 
         mailDest = logDest.get('mail')
-        if smtp and str(mailDest) != '0':
+        if smtp and mailDest == 1:
             from_addr = mail.get('from')
             #TODO: Use schema to validate smtp
-            if str(mailDest) == '1':
+            if mailDest == 1:
                 to_addrs = mail.get('to')
             else:   # Ex. 'Henry TIAN <chariothy@gmail.com>'
                 to_addrs = mailDest
@@ -177,7 +186,7 @@ class AppTool(object):
             logger.addHandler(mail_handler)
 
         stdoutDest = logDest.get('stdout')
-        if str(stdoutDest) == '1':
+        if stdoutDest == 1:
             st_handler = logging.StreamHandler()
             st_handler.level = logging.DEBUG
             st_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))

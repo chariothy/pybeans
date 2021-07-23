@@ -10,7 +10,8 @@ import time
 import random
 import json
 import re
-from typing import Union
+
+from typing import Union, Pattern
 
 from .exception import AppToolError
 
@@ -456,3 +457,31 @@ def cast(original_val, str_val:str):
         return simple_type(str_val)
     else:
         raise ValueError(f'Expect int/float/bool/complex, get {simple_type}')
+    
+    
+def extract_str(reg:Pattern, content:str, default=None):
+    """从字符串中提取文本信息
+
+    Args:
+        reg (Pattern): 编译后的正则对象
+        content (str): 要提取内容的字符串
+        default (str|None)
+    """
+    match = reg.search(content)
+    if match:
+        groups = match.groups()
+        if groups:
+            return groups[0].strip()
+        else:
+            return default
+    else:
+        return default
+    
+
+def find_free_port():
+    from contextlib import closing
+    import socket
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(('', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]

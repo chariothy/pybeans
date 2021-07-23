@@ -8,6 +8,7 @@ import time
 import re
 import builtins
 from typing import Union
+from colorama import Fore, Back, init, Style
 
 from .utils import deep_merge, send_email, get, cast
 from .exception import AppToolError
@@ -250,6 +251,38 @@ class AppTool(object):
 
     def fatal(self, msg, *args, **kwargs):
         self._logger.fatal(msg, *args, **kwargs)
+        
+    
+    def D(self, *args):
+        '''色彩打印 DEBIG
+        '''
+        self.print('DEBUG', *args)
+
+
+    def I(self, *args):
+        '''色彩打印 INFO
+        '''
+        self.print('INFO', *args)
+        
+        
+    def E(self, *args):
+        '''色彩打印 ERROR
+        '''
+        self.print('ERROR', *args)
+
+
+    def print(self, level, *args):
+        local_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if level == 'DEBUG':
+            color = Fore.YELLOW
+        elif level == 'INFO':
+            color = Fore.GREEN
+        elif level == 'ERROR':
+            color = Fore.RED
+        else:
+            color = Fore.BLUE
+        print(color, '{} [{}] - {} - '.format(local_time, self.name, level), *args)
+        print(Style.RESET_ALL, flush=True)
 
 
     def log(self, throw=False, message=''):

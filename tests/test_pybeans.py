@@ -222,6 +222,12 @@ class CoreTestCase(unittest.TestCase):
             send_to_file=self._write_email_to_file
         )
         self.assertDictEqual(result, {})
+        
+    
+    def test_print_color(self):
+        self.D('test debug')
+        self.I('test info')
+        self.E('test error')
 
 
 if __name__ == '__main__':

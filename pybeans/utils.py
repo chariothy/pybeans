@@ -152,7 +152,7 @@ def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str='', s
     # generic email headers
     msg['From'] = from_addr
     msg['To'] = to_addrs
-    msg['Subject'] = subject
+    msg['Subject'] = subject.replace('\n','').replace('\r','')
 
     # set the plain text body
     msg.set_content(text_body)

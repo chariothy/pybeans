@@ -225,9 +225,9 @@ class CoreTestCase(unittest.TestCase):
         
     
     def test_print_color(self):
-        self.D('test debug')
-        self.I('test info')
-        self.E('test error')
+        self.APP.D('test debug')
+        self.APP.I('test info')
+        self.APP.E('test error')
 
 
 if __name__ == '__main__':

@@ -485,3 +485,20 @@ def find_free_port():
         s.bind(('', 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return s.getsockname()[1]
+        
+        
+def print_color_table():
+    """
+    prints table of formatted text format options
+    """
+    for style in range(8):
+        for fg in range(30, 38):
+            s1 = ''
+            for bg in range(40, 48):
+                format = ';'.join([str(style), str(fg), str(bg)])
+                s1 += '\x1b[%sm %s \x1b[0m' % (format, format)
+                usage = f'Format: effect;foreground;background (Ex. \\x1b[{format}m {format} \\x1b[0m)'
+    
+            print(s1)
+        print(usage)
+    print()

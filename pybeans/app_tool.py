@@ -273,16 +273,21 @@ class AppTool(object):
     def print(self, level, *args):
         local_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if level == 'DEBUG':
-            color = 33
+            header = '1;33;44'
+            fg = 33
         elif level == 'INFO':
-            color = 32
+            header = '5;34;43'
+            fg = 32
         elif level == 'ERROR':
-            color = 31
+            header = '1;33;41'
+            fg = 31
         else:
-            color = 34
-        message = f'\033[{color}m{local_time} [{self.name}] - {level:5} -'
-        print(message, *args)
-        print('\033[0m', flush=True)
+            header = '5;30;46'
+            fg = 34
+        app_header = '5;34;47'
+        message = f'{local_time} \x1b[{app_header}m[{self.name}]\x1b[0m - \x1b[{header}m{level:5}\x1b[0m - \x1b[{fg}m'
+        print(message, *args, )
+        print('\x1b[0m', flush=True)
 
 
     def log(self, throw=False, message=''):

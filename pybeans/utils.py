@@ -502,3 +502,30 @@ def print_color_table():
             print(s1)
         print(usage)
     print()
+    
+    
+def timestamp()->str:
+    return time.strftime("%Y%m%d_%H%M%S", time.localtime())
+
+
+def pad_filename(filename:str, pad:str=None, template:str=None)->str:
+    """Pad some text into filename by template
+
+    Args:
+        template (str, optional): [template to pad]. Defaults to None.
+        PAD, FILENAME, FILEEXT are available in the template.
+        Ex. '{FILENAME}_{PAD}.{FILEEXT}'
+        If template is None, '{FILENAME}_`timestamp`.{FILEEXT}' will be used.
+
+    Returns:
+        str: [padded filename]
+    """
+    fpath, fullname = path.split(filename)
+    name, ext = path.splitext(fullname)
+    if template is None:
+        if ext:
+            template = '{FILENAME}_{PAD}.{FILEEXT}'
+        else:
+            template = '{FILENAME}_{PAD}'
+        pad = timestamp()
+    return path.join(fpath, template.format(FILENAME=name, FILEEXT=ext[1:], PAD=pad))

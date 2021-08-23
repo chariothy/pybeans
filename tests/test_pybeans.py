@@ -1,6 +1,6 @@
 import unittest, os, logging
 
-from pybeans import deep_merge, deep_merge_in, benchmark, is_win, is_linux, is_macos, is_darwin
+from pybeans import deep_merge, deep_merge_in, benchmark, is_win, is_linux, is_macos, is_darwin, utils
 from pybeans import random_sleep, dump_json, load_json, send_email, get
 from pybeans import AppTool, AppToolError
 
@@ -228,6 +228,26 @@ class CoreTestCase(unittest.TestCase):
         self.APP.D('test debug')
         self.APP.I('test info')
         self.APP.E('test error')
+        
+        
+    def test_pad_filename(self):
+        self.assertEqual(
+            utils.pad_filename(r'D:\test\test.py', 'xoxo', '{FILENAME}_{PAD}.{FILEEXT}'), 
+            r'D:\test\test_xoxo.py'
+        )
+        self.assertEqual(
+            utils.pad_filename(r'D:\test\test.py', 'xoxo', '{PAD}_{FILENAME}.{FILEEXT}'), 
+            r'D:\test\xoxo_test.py'
+        )
+        self.assertEqual(
+            utils.pad_filename(r'D:\test\test.py', 'xoxo', '{FILENAME}.{PAD}_{FILEEXT}'), 
+            r'D:\test\test.xoxo_py'
+        )
+        self.assertEqual(
+            utils.pad_filename(r'D:\test\test', 'xoxo', '{FILENAME}_{PAD}'), 
+            r'D:\test\test_xoxo'
+        )
+        print('\n### Empty template:', utils.pad_filename(r'D:\test\test.py'))
 
 
 if __name__ == '__main__':

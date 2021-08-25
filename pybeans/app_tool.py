@@ -72,7 +72,7 @@ class AppTool(object):
                     try:
                         config[key] = cast(config[key], os.environ.get(full_key))
                     except ValueError as ex:
-                        print('parent-key:', parent_key, 'key:', key, 'fullkey:', full_key)
+                        print('[pybeans]: parent-key:', parent_key, 'key:', key, 'fullkey:', full_key)
                         raise ex
                 elif type(config[key]) in (list, dict, tuple):
                     config[key] = self._use_env_var(config[key], full_key)
@@ -84,7 +84,7 @@ class AppTool(object):
                     try:
                         config[index] = cast(config[index], os.environ.get(full_key))
                     except ValueError as ex:
-                        print('parent-key:',parent_key, 'index:', index, 'fullkey:', full_key)
+                        print('[pybeans]: parent-key:',parent_key, 'index:', index, 'fullkey:', full_key)
                         raise ex
                 elif type(config[index]) in (list, dict, tuple):
                     config[index] = self._use_env_var(config[index], full_key)

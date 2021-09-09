@@ -227,6 +227,7 @@ class CoreTestCase(unittest.TestCase):
     def test_print_color(self):
         self.APP.D('test debug')
         self.APP.I('test info')
+        self.APP.W('test warn')
         self.APP.E('test error')
         
         

@@ -264,6 +264,12 @@ class AppTool(object):
         self.print('INFO', *args)
         
         
+    def W(self, *args):
+        '''色彩打印 WARN
+        '''
+        self.print('WARN', *args)
+        
+        
     def E(self, *args):
         '''色彩打印 ERROR
         '''
@@ -273,19 +279,22 @@ class AppTool(object):
     def print(self, level, *args):
         local_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if level == 'DEBUG':
-            header = '1;33;44'
-            fg = 33
+            header = '3;37;44'
+            fg = 37
         elif level == 'INFO':
-            header = '5;34;43'
+            header = '3;33;44'
             fg = 32
+        elif level == 'WARN':
+            header = '3;34;43'
+            fg = 33
         elif level == 'ERROR':
-            header = '1;33;41'
+            header = '3;33;41'
             fg = 31
         else:
-            header = '5;30;46'
+            header = '3;30;46'
             fg = 34
-        app_header = '5;34;47'
-        message = f'{local_time} \x1b[{app_header}m[{self.name}]\x1b[0m - \x1b[{header}m{level:5}\x1b[0m - \x1b[{fg}m'
+        app_header = '4;33;40'
+        message = f'{local_time} \x1b[{app_header}m[{self.name}]\x1b[0m - \x1b[{header}m {level:>5} \x1b[0m - \x1b[{fg}m'
         print(message, *args, )
         print('\x1b[0m', flush=True)
 

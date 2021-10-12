@@ -529,3 +529,15 @@ def pad_filename(filename:str, pad:str=None, template:str=None)->str:
             template = '{FILENAME}_{PAD}'
         pad = timestamp()
     return path.join(fpath, template.format(FILENAME=name, FILEEXT=ext[1:], PAD=pad))
+
+
+def run(self, cmd, echo_cmd=False):
+    import subprocess
+    try:
+        if echo_cmd:
+            print(cmd)
+        result = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        result = e.output       # Output generated before error
+        #code      = e.returncode   # Return code
+    return str(result, encoding = "utf-8", errors='ignore')

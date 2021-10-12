@@ -416,12 +416,12 @@ def dump_json(file_path, data, indent=2, ensure_ascii=False, lock=False):
         json.dump(data, fp, indent=indent, ensure_ascii=ensure_ascii)
 
 
-def now():
-    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+def now(format:str="%Y-%m-%d %H:%M:%S"):
+    return time.strftime(format, time.localtime())
 
 
-def today():
-    return time.strftime("%Y-%m-%d", time.localtime())
+def today(format:str="%Y-%m-%d"):
+    return time.strftime(format, time.localtime())
 
 
 def get_abs_dir(dir:str): 
@@ -504,8 +504,8 @@ def print_color_table():
     print()
     
     
-def timestamp()->str:
-    return time.strftime("%Y%m%d_%H%M%S", time.localtime())
+def timestamp(format:str="%Y%m%d_%H%M%S")->str:
+    return time.strftime(format, time.localtime())
 
 
 def pad_filename(filename:str, pad:str=None, template:str=None)->str:

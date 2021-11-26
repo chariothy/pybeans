@@ -13,7 +13,7 @@ PACKAGES = ['pybeans']
 URL = 'https://github.com/chariothy/pybeans.git'
 EMAIL = 'chariothy@gmail.com'
 AUTHOR = 'Henry TIAN'
-VERSION = '1.3.9'
+VERSION = '1.4.0'
 
 LONG_DESCRIPTION = '''
 This is a helper which includes common methods and classes.
@@ -21,7 +21,9 @@ This is a helper which includes common methods and classes.
 '''
 
 # What packages are required for this module to be executed?
-REQUIRED = []
+REQUIRED = [
+    "colorama>=0.4.4"
+]
 
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
@@ -89,6 +91,10 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         'Programming Language :: Python :: Implementation :: CPython',
     ],
     # $ setup.py publish support.

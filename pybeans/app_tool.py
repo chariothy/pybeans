@@ -8,6 +8,9 @@ import time
 import re
 import builtins
 from typing import Union
+from pprint import pformat
+from colorama import Fore, Back, init, Style
+init()
 
 from .utils import deep_merge, send_email, get, cast
 from .exception import AppToolError
@@ -26,9 +29,9 @@ class MySMTPHandler(handlers.SMTPHandler):
 
 
 class AppTool(object):
-    def __init__(self, app_name: str, app_path: str, local_config_dir: str='', config_name: str='config', ignore_env:bool=False):
+    def __init__(self, app_name: str, app_path: str='', local_config_dir: str='', config_name: str='config', ignore_env:bool=False):
         self._app_name = app_name
-        self._app_path = app_path
+        self._app_path = app_path if app_path else os.getcwd()
         self._config = {}
         self._logger = None
 
@@ -156,9 +159,9 @@ class AppTool(object):
         logLevel = logConfig.get('level', logging.DEBUG)
         logger.setLevel(logLevel)
 
-        logDest = logConfig.get('dest', {})
+        logDst = logConfig.get('dest', {})
 
-        fileDest = logDest.get('file')
+        fileDest = logDst.get('file', 1)
         if fileDest == 1:
             regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
             rf_handler = handlers.TimedRotatingFileHandler(path.join(logs_path, f'{regular_log_name}.log'), when='D', interval=1, backupCount=7)
@@ -167,7 +170,7 @@ class AppTool(object):
             rf_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
             logger.addHandler(rf_handler)
 
-        mailDest = logDest.get('mail')
+        mailDest = logDst.get('mail')
         if smtp and mailDest == 1:
             from_addr = mail.get('from')
             #TODO: Use schema to validate smtp
@@ -185,7 +188,7 @@ class AppTool(object):
             mail_handler.setLevel(logging.ERROR)
             logger.addHandler(mail_handler)
 
-        stdoutDest = logDest.get('stdout')
+        stdoutDest = logDst.get('stdout', 1)
         if stdoutDest == 1:
             st_handler = logging.StreamHandler()
             st_handler.level = logging.DEBUG
@@ -253,50 +256,55 @@ class AppTool(object):
         
     
     def D(self, *args):
-        '''色彩打印 DEBUG
+        '''色彩打印 DEBUG，为Docker设计
         '''
         self.print('DEBUG', *args)
 
 
     def I(self, *args):
-        '''色彩打印 INFO
+        '''色彩打印 INFO，为Docker设计
         '''
         self.print('INFO', *args)
         
         
     def W(self, *args):
-        '''色彩打印 WARN
+        '''色彩打印 WARN，为Docker设计
         '''
         self.print('WARN', *args)
         
         
     def E(self, *args):
-        '''色彩打印 ERROR
+        '''色彩打印 ERROR，为Docker设计
         '''
         self.print('ERROR', *args)
 
 
     def print(self, level, *args):
-        local_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        local_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         if level == 'DEBUG':
-            header = '3;37;44'
-            fg = 37
+            header_style = Fore.CYAN
+            fg = ''
         elif level == 'INFO':
-            header = '3;33;44'
-            fg = 32
+            header_style = Fore.WHITE + Back.BLUE
+            fg = Fore.GREEN
         elif level == 'WARN':
-            header = '3;34;43'
-            fg = 33
+            header_style = Fore.BLACK + Back.YELLOW
+            fg = Fore.YELLOW
         elif level == 'ERROR':
-            header = '3;33;41'
-            fg = 31
+            header_style = Fore.WHITE + Back.RED + Style.BRIGHT
+            fg = Fore.RED + Style.BRIGHT
         else:
-            header = '3;30;46'
-            fg = 34
-        app_header = '4;33;40'
-        message = f'{local_time} \x1b[{app_header}m[{self.name}]\x1b[0m - \x1b[{header}m {level:>5} \x1b[0m - \x1b[{fg}m'
-        print(message, *args, )
-        print('\x1b[0m', flush=True)
+            header_style = Fore.RED
+            fg = Fore.RED
+            
+        print(Style.DIM + local_time + Style.RESET_ALL + ' '\
+            + header_style + f'[{level:>5}]' + Style.RESET_ALL + ' ' + fg, end='')
+        for obj in args:
+            if isinstance(obj, str):
+              print(obj, end=' ')
+            else:
+              print(pformat(obj), end=' ')
+        print(Style.RESET_ALL, flush=True)
 
 
     def log(self, throw=False, message=''):
@@ -342,3 +350,26 @@ class AppTool(object):
 
     def __getitem__(self, key):
         return self.get(key, replacement_for_dot_in_key='#', check=True)
+    
+    
+    def print_sample_config(self):
+        from .config_sample import CONFIG
+        from pprint import pprint
+        pprint(CONFIG)
+        
+        
+    def create_sample_config(self):
+        config = ''
+        with open(os.path.join(os.path.dirname(__file__), 'config_sample.py'), encoding='utf-8') as fp:
+            config = fp.read()
+        config_path = os.path.join(os.getcwd(), 'config.py')
+        if os.path.exists(config_path):
+            self.debug(f'"{config_path}" exists, please rename it first.')
+        else:
+            with open(config_path, mode='w') as fp:
+                fp.write(config)
+            self.debug(f'Please find sample config at "{config_path}"')
+        config_local_path = os.path.join(os.getcwd(), 'config_local.py')
+        if not os.path.exists(config_local_path):
+            with open(config_local_path, mode='w') as fp:
+                fp.write('CONFIG = {}')

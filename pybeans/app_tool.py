@@ -298,7 +298,7 @@ class AppTool(object):
             fg = Fore.RED
             
         print(Style.DIM + local_time + Style.RESET_ALL + ' '\
-            + header_style + f'[{level:>5}]' + Style.RESET_ALL + ' ' + fg, end='')
+            + header_style + f' {level:>5} ' + Style.RESET_ALL + ' ' + fg, end='')
         for obj in args:
             if isinstance(obj, str):
               print(obj, end=' ')

@@ -14,6 +14,7 @@ init()
 
 from .utils import deep_merge, send_email, get, cast
 from .exception import AppToolError
+from .ColorfulFormatter import ColorfulFormatter
 
 
 class MySMTPHandler(handlers.SMTPHandler):
@@ -164,7 +165,7 @@ class AppTool(object):
         fileDest = logDst.get('file', 1)
         if fileDest == 1:
             regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
-            rf_handler = handlers.TimedRotatingFileHandler(path.join(logs_path, f'{regular_log_name}.log'), when='D', interval=1, backupCount=7)
+            rf_handler = handlers.TimedRotatingFileHandler(path.join(logs_path, f'{regular_log_name}.log'), when='D', interval=1, backupCount=7, encoding='utf-8')
             rf_handler.suffix = "%Y-%m-%d_%H-%M-%S.log"
             rf_handler.level = logging.INFO
             rf_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
@@ -192,7 +193,7 @@ class AppTool(object):
         if stdoutDest == 1:
             st_handler = logging.StreamHandler()
             st_handler.level = logging.DEBUG
-            st_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+            st_handler.setFormatter(ColorfulFormatter())
             logger.addHandler(st_handler)
         self._logger = logger
         return logger
@@ -252,7 +253,7 @@ class AppTool(object):
 
 
     def fatal(self, msg, *args, **kwargs):
-        self._logger.fatal(msg, *args, **kwargs)
+        self._logger.critical(msg, *args, **kwargs)
         
     
     def D(self, *args):

@@ -6,7 +6,7 @@ from logging import handlers
 import functools
 import time
 import re
-import builtins
+import traceback
 from typing import Union
 from pprint import pformat
 from colorama import Fore, Back, init, Style
@@ -233,7 +233,7 @@ class AppTool(object):
 
 
     def warn(self, msg, *args, **kwargs):
-        self._logger.warn(msg, *args, **kwargs)
+        self._logger.warning(msg, *args, **kwargs)
 
 
     def error(self, msg, *args, **kwargs):
@@ -280,16 +280,22 @@ class AppTool(object):
         self.print('ERROR', *args)
 
 
-    def print(self, level, *args):
+    def X(self, *args):
+        '''色彩打印 EXCEPTION，为Docker设计
+        '''
+        self.print('ERROR', *args, exc_info=True)
+
+
+    def print(self, level, *args, exc_info=False):
         local_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         if level == 'DEBUG':
             header_style = Fore.BLUE + Back.WHITE
             fg = Fore.CYAN
         elif level == 'INFO':
-            header_style = Fore.YELLOW + Back.BLUE
+            header_style = Fore.YELLOW + Back.BLUE + Style.BRIGHT
             fg = Fore.GREEN
         elif level == 'WARN':
-            header_style = Fore.LIGHTBLUE_EX + Back.YELLOW + Style.BRIGHT
+            header_style = Fore.BLUE + Back.YELLOW
             fg = Fore.YELLOW
         elif level == 'ERROR':
             header_style = Fore.WHITE + Back.RED + Style.BRIGHT
@@ -297,7 +303,7 @@ class AppTool(object):
         else:
             header_style = Fore.RED
             fg = Fore.RED
-            
+        
         print(Style.DIM + local_time + Style.RESET_ALL + ' '\
             + header_style + f' {level} ' + Style.RESET_ALL + ' ' + fg, end='')
         for obj in args:
@@ -305,6 +311,9 @@ class AppTool(object):
               print(obj, end=' ')
             else:
               print(pformat(obj), end=' ')
+        if exc_info:
+            print()
+            traceback.print_exc()
         print(Style.RESET_ALL, flush=True)
 
 
@@ -374,3 +383,39 @@ class AppTool(object):
         if not os.path.exists(config_local_path):
             with open(config_local_path, mode='w') as fp:
                 fp.write('CONFIG = {}')
+                
+                
+    def demo_logging(self):
+        '''Show color demo logging for multi-platform.
+        '''
+        lst = ['• New information revealed about how parents of suspect were arrested',
+            '• Students and teachers face pyschological toll after Oxford High School shooting',
+            '• A timeline of a school shooting tragedy',
+            '• Exclusive video shows arrest of parents']
+        dct = {
+            'Prince reveals moment': [1,2,3],
+            'Deeply concerned by': 'Russia putting up to 175,000 troops near Ukraine, US says',
+            'China at twice the rate of US': lst
+        }
+        print('\n'+'#'*40+' Colorful Print '+'#'*40+'\n')
+        self.D('this is demo output for AppTool.D')
+        self.I('this is demo output for AppTool.I')
+        self.W('this is demo output for AppTool.W')
+        self.E('this is demo output for AppTool.E')
+        try:
+            do_nothing()
+        except Exception:
+            self.X('this is demo output for AppTool.X')
+        self.D(dct)
+
+        print('\n'+'#'*40+' Colorful Logger '+'#'*40+'\n')
+        self.debug('this is demo output for AppTool.debug')
+        self.info('this is demo output for AppTool.info')
+        self.warn('this is demo output for AppTool.warning')
+        self.error('this is demo output for AppTool.error')
+        self.fatal('this is demo output for AppTool.fatal')
+        try:
+            do_nothing()
+        except Exception:
+            self.ex('this is demo output for AppTool.ex')
+        self.debug(dct)

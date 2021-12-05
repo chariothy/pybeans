@@ -283,13 +283,13 @@ class AppTool(object):
     def print(self, level, *args):
         local_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         if level == 'DEBUG':
-            header_style = Fore.CYAN
-            fg = ''
+            header_style = Fore.BLUE + Back.WHITE
+            fg = Fore.CYAN
         elif level == 'INFO':
-            header_style = Fore.WHITE + Back.BLUE
+            header_style = Fore.YELLOW + Back.BLUE
             fg = Fore.GREEN
         elif level == 'WARN':
-            header_style = Fore.BLACK + Back.YELLOW
+            header_style = Fore.BLACK + Back.YELLOW + Style.BRIGHT
             fg = Fore.YELLOW
         elif level == 'ERROR':
             header_style = Fore.WHITE + Back.RED + Style.BRIGHT
@@ -299,7 +299,7 @@ class AppTool(object):
             fg = Fore.RED
             
         print(Style.DIM + local_time + Style.RESET_ALL + ' '\
-            + header_style + f' {level:>5} ' + Style.RESET_ALL + ' ' + fg, end='')
+            + header_style + f' {level} ' + Style.RESET_ALL + ' ' + fg, end='')
         for obj in args:
             if isinstance(obj, str):
               print(obj, end=' ')

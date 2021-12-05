@@ -3,15 +3,18 @@ from pybeans.app_tool import AppTool
 from pybeans.utils import print_color_table
 
 print_color_table()
-at = AppTool('test')
-at.D('this is demo output for debug')
-at.I('this is demo output for info')
-at.W('this is demo output for warn')
-at.E('this is demo output for error')
+app = AppTool('test')
+app.D('this is demo output for debug')
+app.I('this is demo output for info')
+app.W('this is demo output for warn')
+app.E('this is demo output for error')
 
-at.debug('this is demo output for debug')
-at.info('this is demo output for info')
-at.warn('this is demo output for warn')
-at.error('this is demo output for error')
-at.fatal('this is demo output for error')
-at.ex('this is demo output for error')
+app.debug('this is demo output for debug')
+app.info('this is demo output for info')
+app.warn('this is demo output for warn')
+app.error('this is demo output for error')
+app.fatal('this is demo output for fatal')
+try:
+    do_nothing()
+except Exception:
+    app.ex('this is demo output for excatipn')

@@ -289,7 +289,7 @@ class AppTool(object):
             header_style = Fore.YELLOW + Back.BLUE
             fg = Fore.GREEN
         elif level == 'WARN':
-            header_style = Fore.BLACK + Back.YELLOW + Style.BRIGHT
+            header_style = Fore.LIGHTBLUE_EX + Back.YELLOW + Style.BRIGHT
             fg = Fore.YELLOW
         elif level == 'ERROR':
             header_style = Fore.WHITE + Back.RED + Style.BRIGHT

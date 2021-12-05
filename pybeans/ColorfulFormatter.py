@@ -8,7 +8,7 @@ class ColorfulFormatter(logging.Formatter):
     FORMATS = {
         logging.DEBUG: Style.RESET_ALL + Style.DIM + "%(asctime)s - %(name)s - " + Style.RESET_ALL + Fore.BLUE + Back.LIGHTWHITE_EX + " %(levelname)s " + Style.RESET_ALL + Fore.CYAN + " - %(message)s (%(filename)s:%(lineno)d)",
         logging.INFO: Style.RESET_ALL + Style.DIM + "%(asctime)s - %(name)s - " + Style.RESET_ALL + Fore.YELLOW + Back.BLUE + " %(levelname)s " + Style.RESET_ALL + Fore.GREEN + " - %(message)s (%(filename)s:%(lineno)d)",
-        logging.WARNING: Style.RESET_ALL + Style.DIM + "%(asctime)s - %(name)s - " + Style.RESET_ALL + Fore.BLACK + Back.YELLOW + Style.BRIGHT + " %(levelname)s " + Style.RESET_ALL + Fore.YELLOW + " - %(message)s (%(filename)s:%(lineno)d)",
+        logging.WARNING: Style.RESET_ALL + Style.DIM + "%(asctime)s - %(name)s - " + Style.RESET_ALL + Fore.LIGHTBLUE_EX + Back.YELLOW + Style.BRIGHT + " %(levelname)s " + Style.RESET_ALL + Fore.YELLOW + " - %(message)s (%(filename)s:%(lineno)d)",
         logging.ERROR: Style.RESET_ALL + Style.DIM + "%(asctime)s - %(name)s - " + Style.RESET_ALL + Fore.WHITE + Back.RED + Style.BRIGHT + " %(levelname)s " + Style.RESET_ALL + Fore.RED + Style.BRIGHT + " - %(message)s (%(filename)s:%(lineno)d)",
         logging.CRITICAL: Style.RESET_ALL + Style.DIM + "%(asctime)s - %(name)s - " + Style.RESET_ALL + Fore.WHITE + Back.RED + Style.BRIGHT + " %(levelname)s " + Style.RESET_ALL + Fore.RED + Style.BRIGHT + " - %(message)s (%(filename)s:%(lineno)d)",
     }

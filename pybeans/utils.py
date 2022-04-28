@@ -6,6 +6,7 @@ from email.utils import formataddr
 import functools
 import platform
 from tkinter import N
+from unicodedata import decimal
 import warnings
 import copy
 from datetime import datetime
@@ -404,8 +405,27 @@ def format_size(size_byte):
         scale, name = unit
         if size_byte >= scale:
             integ = round(size_byte / scale, 2)
-            return f'{integ}{name}'
-    return f'{size_byte}B'
+            return f'{normalize_num(integ)}{name}'
+    return f'{normalize_num(size_byte)}B'
+
+
+def normalize_num(num, n=0):
+    """Remove needless zero after float
+    Ex. 1.500 -> 1.5
+        1.000 -> 1
+
+    Args:
+        num (float|Decimal): Float number to normailize.
+        n (int, optional): Keep n digits. Defaults to 0.
+
+    Returns:
+        Decimal: Normalized number.
+    """
+    if type(num) != Decimal:
+        num = Decimal(num)
+    if n:
+        num = round(num, n)
+    return num.to_integral() if num == num.to_integral() else num.normalize()
 
 
 def format_duration(duration_sec):
@@ -417,6 +437,10 @@ def format_duration(duration_sec):
     Args:
         duration (float): time duration
     """
+    if duration_sec < 1:
+        return f'{normalize_num(duration_sec*1000, 3)}ms'
+    
+    duration_sec = Decimal(str(duration_sec))
     units = [
         (60 * 60 * 24 * 7, 'w'),
         (60 * 60 * 24, 'd'),
@@ -424,7 +448,6 @@ def format_duration(duration_sec):
         (60, 'm'),
     ]
     
-    duration_sec = Decimal(str(duration_sec))
     parts = []
     for unit in units:
         scale, name = unit
@@ -432,7 +455,7 @@ def format_duration(duration_sec):
             integ = round(duration_sec / scale)
             duration_sec -= integ * scale
             parts.append(f'{integ}{name}')
-    parts.append(f'{duration_sec}s')
+    parts.append(f'{normalize_num(duration_sec, 3)}s')
     return ' '.join(parts)
 
 

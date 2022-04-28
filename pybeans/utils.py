@@ -1,8 +1,11 @@
+from decimal import Decimal
+from operator import mod
 import os, sys
 from os import path
 from email.utils import formataddr
 import functools
 import platform
+from tkinter import N
 import warnings
 import copy
 from datetime import datetime
@@ -380,15 +383,68 @@ def get(dictionary: dict, key:str, default=None, check:bool=False, replacement_f
     return config
 
 
+def format_size(size_byte):
+    """Format file size
+    If size < 1MB, show as KB
+    If size < 1GB, show as MB
+    ect...
+
+    Args:
+        size (float): time size
+    """
+    units = [
+        (1024 * 1024 * 1024 * 1024, 'TB'),
+        (1024 * 1024 * 1024, 'GB'),
+        (1024 * 1024, 'MB'),
+        (1024, 'KB'),
+    ]
+    
+    size_byte = Decimal(str(size_byte))
+    for unit in units:
+        scale, name = unit
+        if size_byte >= scale:
+            integ = round(size_byte / scale, 2)
+            return f'{integ}{name}'
+    return f'{size_byte}B'
+
+
+def format_duration(duration_sec):
+    """Format time duration
+    If duration < 1s, show as ms
+    If duration < 1m, show as s
+    ect...
+
+    Args:
+        duration (float): time duration
+    """
+    units = [
+        (60 * 60 * 24 * 7, 'w'),
+        (60 * 60 * 24, 'd'),
+        (60 * 60, 'h'),
+        (60, 'm'),
+    ]
+    
+    duration_sec = Decimal(str(duration_sec))
+    parts = []
+    for unit in units:
+        scale, name = unit
+        if duration_sec >= scale:
+            integ = round(duration_sec / scale)
+            duration_sec -= integ * scale
+            parts.append(f'{integ}{name}')
+    parts.append(f'{duration_sec}s')
+    return ' '.join(parts)
+
+
 def benchmark(func):
     """This is a decorator which can be used to benchmark time elapsed during running func."""
     @functools.wraps(func)
     def new_func(*args, **kwargs):
-        start = datetime.now()
+        start = time.time()
         result = func(*args, **kwargs)
-        end = datetime.now()
-        elapsed = (end - start).microseconds
-        print(f'Elapsed {elapsed} ms during running {func.__name__}')
+        end = time.time()
+        elapsed = end - start
+        print(f'Elapsed {format_duration(elapsed)} during running {func.__name__}.')
         return result
     return new_func
 

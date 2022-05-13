@@ -1,6 +1,6 @@
 from decimal import Decimal
 from operator import mod
-import os, sys
+import os
 from os import path
 from email.utils import formataddr
 import functools
@@ -24,16 +24,16 @@ REG_NUM_INDEX = re.compile(r'\[([\+\-]?\d+)\]')
 WIN = 'Windows'
 LINUX = 'Linux'
 DARWIN = 'Darwin'
-os_sys = platform.system()
+OS_SYS = platform.system()
 
 def is_win():
-    return os_sys == WIN
+    return OS_SYS == WIN
 
 def is_linux():
-    return os_sys == LINUX
+    return OS_SYS == LINUX
 
 def is_darwin():
-    return os_sys == DARWIN
+    return OS_SYS == DARWIN
 
 def is_macos():
     return is_darwin()
@@ -73,9 +73,9 @@ def deep_merge_in(dict1: dict, dict2: dict) -> dict:
     Returns:
         dict -- Merged dictionary
     """
-    if type(dict1) is dict and type(dict2) is dict:
+    if isinstance(dict1, dict) and isinstance(dict2, dict):
         for key in dict2.keys():
-            if key in dict1.keys() and type(dict1[key]) is dict and type(dict2[key]) is dict:
+            if key in dict1.keys() and isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
                 deep_merge_in(dict1[key], dict2[key])
             else:
                 dict1[key] = dict2[key]
@@ -92,10 +92,10 @@ def deep_merge(dict1: dict, dict2: dict) -> dict:
     Returns:
         dict -- Merged dictionary
     """
-    if type(dict1) is dict and type(dict2) is dict:
+    if isinstance(dict1, dict) and isinstance(dict2, dict):
         dict1_copy = dict1.copy()
         for key in dict2.keys():
-            if key in dict1.keys() and type(dict1[key]) is dict and type(dict2[key]) is dict:
+            if key in dict1.keys() and isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
                 dict1_copy[key] = deep_merge(dict1[key], dict2[key])
             else:
                 dict1_copy[key] = dict2[key]
@@ -103,10 +103,11 @@ def deep_merge(dict1: dict, dict2: dict) -> dict:
     return dict1
 
 
-def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str='', smtp_config: dict={}, 
-    html_body: str=None, 
-    image_paths: tuple=None, file_paths: tuple=None, 
-    debug: bool=False, send_to_file: bool=False, email_file_dir=None
+def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str = '' \
+    , smtp_config: dict = {} \
+    , html_body: str = None \
+    , image_paths: tuple = None, file_paths: tuple = None \
+    , debug: bool = False, send_to_file: bool = False, email_file_dir=None \
     ) -> dict:
     """Helper for sending email
     
@@ -134,11 +135,13 @@ def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str='', s
     Returns:
         dict -- Email sending errors. {} if success, else {receiver: message}.
     """
-    assert type(from_addr) is str
-    assert type(to_addrs) is str
-    assert type(subject) is str
+    assert isinstance(from_addr, str)
+    assert isinstance(to_addrs, str)
+    assert isinstance(subject, str)
     assert text_body or html_body
-    assert type(smtp_config) is dict
+    assert isinstance(smtp_config, dict)
+    assert image_paths is None or isinstance(image_paths, (list, tuple))
+    assert file_paths is None or isinstance(file_paths, (list, tuple))
 
     if send_to_file:
         if not email_file_dir:
@@ -156,14 +159,14 @@ def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str='', s
     # generic email headers
     msg['From'] = from_addr
     msg['To'] = to_addrs
-    msg['Subject'] = subject.replace('\n','').replace('\r','')
+    msg['Subject'] = subject.replace('\n', '').replace('\r', '')
 
     # set the plain text body
     msg.set_content(text_body)
 
     if html_body:
         img_nodes = []
-        if image_paths and len(image_paths) > 0:
+        if image_paths:
             for image_path in image_paths:
                 # print(guess_type(image_path)[0].split('/', 1))
                 with open(image_path, 'rb') as fp:
@@ -185,7 +188,7 @@ def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str='', s
                 cid=img_node['cid']
             )
 
-    if file_paths and len(file_paths) > 0:
+    if file_paths:
         for file_path in file_paths:
             ctype, encoding = guess_type(file_path)
             if ctype is None or encoding is not None:
@@ -196,10 +199,10 @@ def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str='', s
             
             with open(file_path, 'rb') as fp:
                 file_name = os.path.basename(file_path)
-                msg.add_attachment(fp.read(),
-                    maintype=maintype,
-                    subtype=subtype,
-                    filename=file_name
+                msg.add_attachment(fp.read() \
+                    , maintype=maintype \
+                    , subtype=subtype \
+                    , filename=file_name \
                 )
     
     if send_to_file or debug:
@@ -284,7 +287,7 @@ def get_win_folder(name):
     return get_win_folder(name)
 
 
-def get(dictionary: dict, key:str, default=None, check:bool=False, replacement_for_dot_in_key:str=None):
+def get(dictionary: dict, key: str, default=None, check: bool = False, replacement_for_dot_in_key: str = None):
     """Get value in dictionary, keys are connected by dot, and use environment value if exists
     Get dictionary value, 
         - if key exists in environment, use env value,
@@ -495,19 +498,43 @@ def dump_json(file_path, data, indent=2, ensure_ascii=False, lock=False):
         json.dump(data, fp, indent=indent, ensure_ascii=ensure_ascii)
 
 
-def now(format:str="%Y-%m-%d %H:%M:%S"):
+def now(format: str = "%Y-%m-%d %H:%M:%S"):
+    """Shortcut
+
+    Args:
+        format (str, optional): date time format. Defaults to "%Y-%m-%d %H:%M:%S".
+
+    Returns:
+        str: now
+    """
     return time.strftime(format, time.localtime())
 
 
-def today(format:str="%Y-%m-%d"):
+def today(format: str = "%Y-%m-%d"):
+    """Shortcut
+
+    Args:
+        format (str, optional): date time format. Defaults to "%Y-%m-%d %H:%M:%S".
+
+    Returns:
+        str: today
+    """
     return time.strftime(format, time.localtime())
 
 
-def get_abs_dir(dir:str): 
+def get_abs_dir(dir: str):
+    """Get absolute dir
+
+    Args:
+        dir (str): relative path
+
+    Returns:
+        str: absolute dir
+    """
     return os.path.split(os.path.realpath(dir))[0]
 
 
-def print_logo(logo_dir:str = __file__):
+def print_logo(logo_dir: str = __file__):
     """
     print logo for fun
     """
@@ -516,7 +543,7 @@ def print_logo(logo_dir:str = __file__):
         os.system(f'cat {logo_path}')
 
 
-def print_author(author_dir:str = __file__):
+def print_author(author_dir: str = __file__):
     """
     print author for fun
     """
@@ -525,7 +552,7 @@ def print_author(author_dir:str = __file__):
         os.system(f'cat {logo_path}')
         
         
-def cast(original_val, str_val:str):
+def cast(original_val, str_val: str):
     """Cast simple type from character
     Ex. int, float, bool, complex
     """
@@ -538,7 +565,7 @@ def cast(original_val, str_val:str):
         raise ValueError(f'Expect int/float/bool/complex, get {simple_type}')
     
     
-def extract_str(reg:Pattern, content:str, default=None):
+def extract_str(reg: Pattern, content: str, default=None):
     """从字符串中提取文本信息
 
     Args:
@@ -564,8 +591,8 @@ def find_free_port():
         s.bind(('', 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return s.getsockname()[1]
-        
-        
+
+
 def print_color_table():
     """
     prints table of formatted text format options
@@ -577,17 +604,17 @@ def print_color_table():
                 format = ';'.join([str(style), str(fg), str(bg)])
                 s1 += '\x1b[%sm %s \x1b[0m' % (format, format)
                 usage = f'Format: effect;foreground;background (Ex. \\x1b[{format}m {format} \\x1b[0m)'
-    
+
             print(s1)
         print(usage)
     print()
-    
-    
-def timestamp(format:str="%Y%m%d_%H%M%S")->str:
+
+
+def timestamp(format: str = "%Y%m%d_%H%M%S")->str:
     return time.strftime(format, time.localtime())
 
 
-def pad_filename(filename:str, pad:str=None, template:str=None)->str:
+def pad_filename(filename: str, pad: str = None, template: str = None) -> str:
     """Pad some text into filename by template
 
     Args:
@@ -619,7 +646,7 @@ def run(cmd, echo_cmd=False):
     except subprocess.CalledProcessError as e:
         result = e.output       # Output generated before error
         #code      = e.returncode   # Return code
-    return str(result, encoding = "utf-8", errors='ignore')
+    return str(result, encoding="utf-8", errors='ignore')
 
 
 def demo_logging():
@@ -639,3 +666,11 @@ def demo_logging():
         do_nothing()
     except Exception:
         app.ex('this is demo output for excatipn')
+        
+
+def env():
+    return os.environ.get('ENV')
+
+
+def is_prod():
+    return env() == 'prod'

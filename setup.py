@@ -1,4 +1,3 @@
-import io
 import os
 import sys
 from shutil import rmtree
@@ -13,7 +12,7 @@ PACKAGES = ['pybeans']
 URL = 'https://github.com/chariothy/pybeans.git'
 EMAIL = 'chariothy@gmail.com'
 AUTHOR = 'Henry TIAN'
-VERSION = '1.7.2'
+VERSION = '1.7.3'
 
 LONG_DESCRIPTION = '''
 This is a helper which includes common methods and classes.
@@ -30,7 +29,7 @@ REQUIRED = [
 # Except, perhaps the License and Trove Classifiers!
 # If you do change the License, remember to change the Trove Classifier for that!
 
-here = os.path.abspath(os.path.dirname(__file__))
+HERE = os.path.abspath(os.path.dirname(__file__))
 
 class UploadCommand(Command):
     """Support setup.py upload."""
@@ -52,7 +51,7 @@ class UploadCommand(Command):
     def run(self):
         try:
             self.status('Removing previous builds…')
-            rmtree(os.path.join(here, 'dist'))
+            rmtree(os.path.join(HERE, 'dist'))
         except OSError:
             pass
 
@@ -95,6 +94,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         'Programming Language :: Python :: Implementation :: CPython',
     ],
     # $ setup.py publish support.

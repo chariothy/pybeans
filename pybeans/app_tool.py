@@ -1,8 +1,8 @@
 import os, sys, logging
+from logging import handlers
 from os import path
 from email.utils import formataddr
 from collections.abc import Iterable
-from logging import handlers
 import functools
 import time
 import re
@@ -116,7 +116,7 @@ class AppTool(object):
             self._config = __import__(config_name).CONFIG
         except Exception:
             self._config = {}
-
+        
         config_local_path = path.join(self._app_path, local_config_dir)
         sys.path.append(config_local_path)
         try:
@@ -147,7 +147,7 @@ class AppTool(object):
         Returns:
             [logger] -- Initialized logger.
         """
-
+        
         smtp = self._config.get('smtp')
         mail = self._config.get('mail')
         logConfig = self._config.get('log', {})
@@ -162,20 +162,23 @@ class AppTool(object):
 
         logDst = logConfig.get('dest', {})
 
-        fileDest = logDst.get('file', 1)
-        if fileDest == 1:
+        fileDest = logDst.get('file')
+        if fileDest is not None:
+            if not fileDest: # Empty
+                regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
+                fileDest = path.join(logs_path, f'{regular_log_name}.log')
             regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
-            rf_handler = handlers.TimedRotatingFileHandler(path.join(logs_path, f'{regular_log_name}.log'), when='D', interval=1, backupCount=7, encoding='utf-8')
+            rf_handler = handlers.TimedRotatingFileHandler(fileDest, when='D', interval=1, backupCount=7, encoding='utf-8')
             rf_handler.suffix = "%Y-%m-%d_%H-%M-%S.log"
             rf_handler.level = logging.INFO
             rf_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
             logger.addHandler(rf_handler)
 
         mailDest = logDst.get('mail')
-        if smtp and mailDest == 1:
+        if smtp and mailDest is not None:
             from_addr = mail.get('from')
             #TODO: Use schema to validate smtp
-            if mailDest == 1:
+            if not mailDest:    # Empty
                 to_addrs = mail.get('to')
             else:   # Ex. 'Henry TIAN <chariothy@gmail.com>'
                 to_addrs = mailDest
@@ -189,12 +192,24 @@ class AppTool(object):
             mail_handler.setLevel(logging.ERROR)
             logger.addHandler(mail_handler)
 
-        stdoutDest = logDst.get('stdout', 1)
-        if stdoutDest == 1:
+        stdoutDest = logDst.get('stdout')
+        if stdoutDest is not None:
             st_handler = logging.StreamHandler()
             st_handler.level = logging.DEBUG
             st_handler.setFormatter(ColorfulFormatter())
             logger.addHandler(st_handler)
+            
+        syslogDest = logDst.get('syslog')
+        if syslogDest is not None:
+            sl_handler = logging.handlers.SysLogHandler(address=tuple(syslogDest))
+            sl_handler.level = logging.DEBUG
+            formatterDict = logConfig.get('formatter', {})
+            syslogFormatter = formatterDict.get('syslog', None)
+            if not syslogFormatter:
+                syslogFormatter = f'{self._app_name}[%(process)d]: %(filename)s[%(lineno)d] - %(message)s'
+            sl_handler.setFormatter(logging.Formatter(syslogFormatter))
+            logger.addHandler(sl_handler)
+
         self._logger = logger
         return logger
 

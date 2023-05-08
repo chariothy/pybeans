@@ -5,10 +5,15 @@ CONFIG = {
                             #   INFO    - Enable file, mail         （如果在dest中启用）
                             #   ERROR   - Enable mail               （如果在dest中启用）
         'dest': {
-            'stdout': 1, 
-            'file': 0, 
-            'mail': 1       # 在mail中设置
-        },  # 分别设置日志对象，优先级高于level设置
+            'stdout': True, # None: disabled,
+            'file': './logs/app.log',   # None: disabled, 
+                                        # PATH: log file path, 
+                                        # '': Default path under ./logs/
+            'syslog': ('10.8.0.2', 514),    # None: disabled, or (ip, port)
+            'mail': 'Henry TIAN <6314849@qq.com>'   # None: disabled,
+                                                    # MAIL: send to
+                                                    # '': use setting ['mail']['to']
+        }
     },
     'mail': {
         'from': ['Henry TIAN', 'chariothy@gmail.com'],

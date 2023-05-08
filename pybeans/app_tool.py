@@ -206,7 +206,7 @@ class AppTool(object):
             formatterDict = logConfig.get('formatter', {})
             syslogFormatter = formatterDict.get('syslog', None)
             if not syslogFormatter:
-                syslogFormatter = f'{self._app_name}[%(process)d]: %(filename)s[%(lineno)d] - %(message)s'
+                syslogFormatter = f'{self._app_name}[%(process)d]: %(message)s'
             sl_handler.setFormatter(logging.Formatter(syslogFormatter))
             logger.addHandler(sl_handler)
 

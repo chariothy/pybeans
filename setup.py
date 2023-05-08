@@ -12,7 +12,7 @@ PACKAGES = ['pybeans']
 URL = 'https://github.com/chariothy/pybeans.git'
 EMAIL = 'chariothy@gmail.com'
 AUTHOR = 'Henry TIAN'
-VERSION = '1.7.4'
+VERSION = '1.7.5'
 
 LONG_DESCRIPTION = '''
 This is a helper which includes common methods and classes.

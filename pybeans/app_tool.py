@@ -152,10 +152,6 @@ class AppTool(object):
         mail = self._config.get('mail')
         logConfig = self._config.get('log', {})
 
-        logs_path = path.join(self._app_path, 'logs')
-        if not os.path.exists(logs_path):
-            os.mkdir(logs_path)
-
         logger = logging.getLogger(self._app_name)
         logLevel = logConfig.get('level', logging.DEBUG)
         logger.setLevel(logLevel)
@@ -165,6 +161,9 @@ class AppTool(object):
         fileDest = logDst.get('file')
         if fileDest is not None:
             if not fileDest: # Empty
+                logs_path = path.join(self._app_path, 'logs')
+                if not os.path.exists(logs_path):
+                    os.mkdir(logs_path)
                 regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
                 fileDest = path.join(logs_path, f'{regular_log_name}.log')
             regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())

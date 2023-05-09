@@ -26,6 +26,7 @@ class MySMTPHandler(handlers.SMTPHandler):
         #help(formatter)
         
         formatter = logging.Formatter(fmt=self.subject)
+        record.message = record.msg # To be compatible with Python 3.10 to avoid KeyError in formatMessage
         return formatter.formatMessage(record)
 
 
@@ -175,7 +176,6 @@ class AppTool(object):
 
         mailDest = logDst.get('mail')
         if smtp and mailDest is not None:
-            from_addr = mail.get('from')
             #TODO: Use schema to validate smtp
             if not mailDest:    # Empty
                 to_addrs = mail.get('to')
@@ -184,7 +184,7 @@ class AppTool(object):
 
             mail_handler = MySMTPHandler(
                     mailhost = (smtp['host'], smtp['port']),
-                    fromaddr = from_addr,
+                    fromaddr = mail.get('from'),
                     toaddrs = to_addrs,
                     subject = '%(name)s - %(levelname)s - %(message)s',
                     credentials = (smtp['user'], smtp['pwd']))

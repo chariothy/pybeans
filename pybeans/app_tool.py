@@ -191,7 +191,7 @@ class AppTool(object):
             mail_handler.setLevel(logging.ERROR)
             logger.addHandler(mail_handler)
 
-        stdoutDest = logDst.get('stdout')
+        stdoutDest = logDst.get('stdout', True)
         if stdoutDest is not None:
             st_handler = logging.StreamHandler()
             st_handler.level = logging.DEBUG

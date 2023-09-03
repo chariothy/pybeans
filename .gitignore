@@ -1,6 +1,7 @@
 *_local.py
 logs
 .history
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -674,3 +674,13 @@ def env():
 
 def is_prod():
     return env() == 'prod'
+
+
+def help():
+    import inspect
+    local_vars = locals()
+    for name, obj in local_vars.items():
+        if inspect.isfunction(obj):
+            signature = inspect.signature(obj)
+            params = [str(param) for param in signature.parameters.values()]
+            print(f"Function: {name}, Parameters: {', '.join(params)}")

@@ -96,6 +96,15 @@ class AppTool(object):
         return config
 
 
+    def help(self):
+        desc = '''
+Config priority: Env var > local config > config.
+Env var: Ex. a.b             -> APP_A
+             a.b[0][1].e'    -> APP_A_B_0_1_E
+'''
+        print(desc)
+        
+
     def load_config(self, local_config_dir: str = '', config_name: str='config', read_env:bool=True) -> dict:
         """Load config locally then replace some with env value if NOT ignore_env
         NOTE! 

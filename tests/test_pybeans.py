@@ -43,11 +43,6 @@ class CoreTestCase(unittest.TestCase):
         env['TEST_ING_ENV'] = '' # The first TESTING is app_name
         self.demo_value = 'DEMO_VALUE'
         self.demo_int = '4'
-         # The header TEST_ING is app_name
-        env['TEST_ING_DEMO_HOST'] = self.demo_value
-        env['TEST_ING_DEMO_KEY_FROM_0'] = self.demo_value
-        env['TEST_ING_DEMO_KEY_FROM_0_0'] = self.demo_value
-        env['TEST_ING_DEMO_TYPE'] = self.demo_int
         
         self._write_email_to_file = env.get('MAIL_DEST') != 'mail'
 
@@ -134,10 +129,7 @@ class CoreTestCase(unittest.TestCase):
         self.assertEqual(CONFIG['demo.key2']['from'][0], self.APP['demo#key2.from[0]'])
         self.assertRaises(AppToolError, lambda k: self.APP[k], 'demo#key.from2[0]') # Because now demo.key is replaced by env
         
-        self.assertEqual(self.demo_value, self.APP['demo.host'])
-
         self.assertEqual(CONFIG_LOCAL['log']['level'], self.APP['log.level'])
-        self.assertEqual(int(self.demo_int), self.APP['demo.type'])
 
     def test_send_text_email(self):
         """

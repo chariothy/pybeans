@@ -98,7 +98,7 @@ class AppTool(object):
 
     def help(self):
         desc = '''
-Config priority: Env var > local config > config.
+Config priority: config_dev var > config_local > config.
 Env var: Ex. a.b             -> APP_A
              a.b[0][1].e'    -> APP_A_B_0_1_E
 '''
@@ -108,6 +108,7 @@ Env var: Ex. a.b             -> APP_A
     def load_config(self, local_config_dir: str = '', config_name: str='config', read_env:bool=True) -> dict:
         """Load config locally then replace some with env value if NOT ignore_env
         NOTE! 
+            - If exists APP_ENV_TEST=dev environment var, will load config_dev.py and cover default.
             - env key of config key will be UPPER of APP_NAME and KEY_NAMEs (connected by '_')
             - ANY char which is NOT A-Za-z0-9_ , that's say \\w in re, will be replaced by '_'
             Ex. a.b             -> APP_A
@@ -146,8 +147,6 @@ Env var: Ex. a.b             -> APP_A
             except Exception:
                 pass
         
-        if read_env:
-            self._use_env_var(self._config, regular_app_name)
         return self._config
 
 

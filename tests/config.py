@@ -1,3 +1,5 @@
+from os import environ as env
+
 CONFIG = {
     'log': {
         'level': 'DEBUG',   # 与log库的level一致，包括DEBUG, INFO, ERROR
@@ -26,7 +28,7 @@ CONFIG = {
         'pwd': '123456'
     },
     'demo': {
-        'host': 'smtp.gmail.com',
+        'host': env.get('DEMO_HOST', 'smtp.gmail.com'),
         'type': 1   # Env中读取出来的都是字符串，这里测试将Env中的值自动转换类型
     },
     'demo.key': {
@@ -36,5 +38,5 @@ CONFIG = {
     'demo.key2': {
         'from': ['Henry TIAN', 'chariothy@gmail.com'],
         'to': [['Henry TIAN', 'chariothy@gmail.com']]
-    },
+    }
 }

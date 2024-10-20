@@ -12,7 +12,7 @@ PACKAGES = ['pybeans']
 URL = 'https://github.com/chariothy/pybeans.git'
 EMAIL = 'chariothy@gmail.com'
 AUTHOR = 'Henry TIAN'
-VERSION = '1.9.0'
+VERSION = '1.10.0'
 
 LONG_DESCRIPTION = '''
 This is a helper which includes common methods and classes.
@@ -78,7 +78,7 @@ setup(
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
-    python_requires='>=3.6.0',
+    python_requires='>=3.8.0',
     # If your package is a single module, use this instead of 'packages':
     packages=PACKAGES,
     install_requires=REQUIRED,
@@ -89,12 +89,11 @@ setup(
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.6',
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         'Programming Language :: Python :: Implementation :: CPython',
     ],
     # $ setup.py publish support.

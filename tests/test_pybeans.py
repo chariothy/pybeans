@@ -241,6 +241,13 @@ class CoreTestCase(unittest.TestCase):
             r'D:\test\test_xoxo'
         )
         print('\n### Empty template:', utils.pad_filename(r'D:\test\test.py'))
+    
+    def test_retry(self):
+        @self.APP.retry(n=3, delay=1)
+        def test_func():
+            print('test_func')
+            raise ValueError('test error')
+        self.assertRaises(ValueError, test_func)
 
 
 if __name__ == '__main__':

@@ -376,6 +376,30 @@ Env var: Ex. a.b             -> APP_A
         return decorator
 
 
+    def retry(self, n=3, delay=1):
+        """
+        A decorator to retry a function n times with a delay between attempts.
+
+        :param n: Number of retries (default is 3)
+        :param delay: Delay in seconds between retries (default is 1)
+        """
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                for attempt in range(n):
+                    try:
+                        return func(*args, **kwargs)
+                    except Exception as e:
+                        if attempt < n - 1:  # Only log if not the last attempt
+                            self.debug(f"Attempt {attempt + 1} failed: {e}. Retrying...")
+                            time.sleep(delay)
+                        else:
+                            self.debug(f"Attempt {attempt + 1} failed: {e}. No more retries.")
+                            raise  # Re-raise the exception after the last attempt
+            return wrapper
+        return decorator
+
+
     def get(self, key:str, default=None, check:bool=False, replacement_for_dot_in_key:str='#'):
         return get(self._config, key, default, check, replacement_for_dot_in_key)
 

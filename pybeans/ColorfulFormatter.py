@@ -1,4 +1,4 @@
-import logging
+import logging, json
 from colorama import Fore, Back, Style
 
 class ColorfulFormatter(logging.Formatter):
@@ -14,6 +14,8 @@ class ColorfulFormatter(logging.Formatter):
     }
 
     def format(self, record):
+        if isinstance(record.msg, dict):
+            record.msg = json.dumps(record.msg, indent=4, ensure_ascii=False)
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)

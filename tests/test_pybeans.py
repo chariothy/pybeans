@@ -215,14 +215,7 @@ class CoreTestCase(unittest.TestCase):
         )
         self.assertDictEqual(result, {})
         
-    
-    def test_print_color(self):
-        self.APP.D('test debug')
-        self.APP.I('test info')
-        self.APP.W('test warn')
-        self.APP.E('test error')
-        
-        
+            
     def test_pad_filename(self):
         self.assertEqual(
             utils.pad_filename(r'D:\test\test.py', 'xoxo', '{FILENAME}_{PAD}.{FILEEXT}'), 

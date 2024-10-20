@@ -31,6 +31,7 @@ class CoreTestCase(unittest.TestCase):
         self.assertEqual(CONFIG_DEV['log']['level'], self.APP['log.level'])
         self.assertEqual(CONFIG_DEV['log']['dest']['file'], self.APP['log.dest.file'])
         
+        self.APP = AppTool(self.APP_NAME, os.getcwd()) ## Reload config for env.
         self.assertEqual(self.APP['demo.host'], 'smtp.gmail.com')
 
 

@@ -276,36 +276,6 @@ Env var: Ex. a.b             -> APP_A
 
     def fatal(self, msg, *args, **kwargs):
         self._logger.critical(msg, *args, **kwargs)
-        
-    
-    def D(self, *args):
-        '''色彩打印 DEBUG，为Docker设计
-        '''
-        self.print('DEBUG', *args)
-
-
-    def I(self, *args):
-        '''色彩打印 INFO，为Docker设计
-        '''
-        self.print('INFO', *args)
-        
-        
-    def W(self, *args):
-        '''色彩打印 WARN，为Docker设计
-        '''
-        self.print('WARN', *args)
-        
-        
-    def E(self, *args):
-        '''色彩打印 ERROR，为Docker设计
-        '''
-        self.print('ERROR', *args)
-
-
-    def X(self, *args):
-        '''色彩打印 EXCEPTION，为Docker设计
-        '''
-        self.print('ERROR', *args, exc_info=True)
 
 
     def print(self, level, *args, exc_info=False):
@@ -443,16 +413,6 @@ Env var: Ex. a.b             -> APP_A
             'Deeply concerned by': 'Russia putting up to 175,000 troops near Ukraine, US says',
             'China at twice the rate of US': lst
         }
-        print('\n'+'#'*40+' Colorful Print '+'#'*40+'\n')
-        self.D('this is demo output for AppTool.D')
-        self.I('this is demo output for AppTool.I')
-        self.W('this is demo output for AppTool.W')
-        self.E('this is demo output for AppTool.E')
-        try:
-            do_nothing()
-        except Exception:
-            self.X('this is demo output for AppTool.X')
-        self.D(dct)
 
         print('\n'+'#'*40+' Colorful Logger '+'#'*40+'\n')
         self.debug('this is demo output for AppTool.debug')
@@ -464,4 +424,5 @@ Env var: Ex. a.b             -> APP_A
             do_nothing()
         except Exception:
             self.ex('this is demo output for AppTool.ex')
+        self.debug(lst)
         self.debug(dct)

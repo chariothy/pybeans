@@ -5,9 +5,11 @@ from email.utils import formataddr
 from collections.abc import Iterable
 import functools
 import time
-import re
+import re, json
 import traceback
-from typing import Union
+import requests
+from .utils import now, create_sign_for_dingtalk
+
 from pprint import pformat
 from colorama import Fore, Back, init, Style
 init()
@@ -308,6 +310,33 @@ Env var: Ex. a.b             -> APP_A
             traceback.print_exc()
         print(Style.RESET_ALL, flush=True)
 
+
+    def ding(self, title, text):
+        token = self['dingtalk.token']
+        secret = self['dingtalk.secret']    
+        assert token and secret
+        dt_msg = {
+            "msgtype": 'markdown',
+            "markdown": {
+                'title': title,
+                'text': f'''**<font color=#6A65FF>{title}</font>**\n
+{now()}\n
+---\n
+{text}'''
+            }
+        }
+        self.debug(dt_msg)
+        timestamp, sign = create_sign_for_dingtalk(secret)
+        url = f"https://oapi.dingtalk.com/robot/send?access_token={token}&timestamp={timestamp}&sign={sign}"
+        
+        @self.retry(n=3)
+        def req():
+            return requests.post(url=url, \
+                headers = {'Content-Type': 'application/json'}, \
+                data=json.dumps(dt_msg) \
+            ).json()
+        return req()
+    
 
     def log(self, throw=False, message=''):
         """Decorator

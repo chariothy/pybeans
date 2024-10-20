@@ -1,6 +1,5 @@
 import os
 from pybeans.app_tool import AppTool
-from pybeans.utils import print_color_table
 
 #print_color_table()
 app = AppTool('manual_test')
@@ -10,4 +9,9 @@ app.demo_logging()
 def test_retry():
     raise NotImplementedError('Test')
 
-test_retry()
+try:
+    test_retry()
+except Exception:
+    print('test_retry done.')
+
+app.ding('title', 'body')

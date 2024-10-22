@@ -375,7 +375,7 @@ Env var: Ex. a.b             -> APP_A
         return decorator
 
 
-    def retry(self, n=3, delay=1):
+    def retry(self, n=3, delay=1, error=Exception):
         """
         A decorator to retry a function n times with a delay between attempts.
 
@@ -388,7 +388,7 @@ Env var: Ex. a.b             -> APP_A
                 for attempt in range(n):
                     try:
                         return func(*args, **kwargs)
-                    except Exception as e:
+                    except error as e:
                         if attempt < n - 1:  # Only log if not the last attempt
                             self.debug(f"Attempt {attempt + 1} failed: {e}. Retrying...")
                             time.sleep(delay)

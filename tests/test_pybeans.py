@@ -48,6 +48,8 @@ class CoreTestCase(unittest.TestCase):
 
         self.APP_NAME = 'test-ing'
         self.APP = AppTool(self.APP_NAME, os.getcwd())
+        
+        self.n = 0
         #print(self.APP.config)
         #print(env)
 
@@ -236,12 +238,23 @@ class CoreTestCase(unittest.TestCase):
         print('\n### Empty template:', utils.pad_filename(r'D:\test\test.py'))
     
     def test_retry(self):
+        self.n = 0
         @self.APP.retry(n=3, delay=1)
         def test_func():
             print('test_func')
+            self.n += 1
             raise ValueError('test error')
         self.assertRaises(ValueError, test_func)
+        self.assertEqual(self.n, 3)
 
+        self.n = 0
+        @self.APP.retry(n=3, delay=1, error=NameError)
+        def test_func():
+            print('test_func')
+            self.n += 1
+            raise ValueError('test error')
+        self.assertRaises(ValueError, test_func)
+        self.assertEqual(self.n, 1)
 
 if __name__ == '__main__':
     unittest.main()

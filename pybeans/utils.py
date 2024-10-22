@@ -127,7 +127,7 @@ def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str = '' 
             'port': 465,
             'user': 'henrytian@163.com',
             'pwd': '123456',
-            'type': 'plain'         # plain (default) / ssl / tls
+            'type': 'ssl'         # plain / ssl (default) / tls
         }
         debug {bool} -- If True output debug info.
         send_to_file {str} -- File path for writing email info to text file.

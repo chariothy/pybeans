@@ -24,6 +24,6 @@ CONFIG = {
         'port': 25,
         'user': 'chariothy@gmail.com',
         'pwd': '123456',
-        'type': 'ssl' # None for non-ssl
+        'type': 'ssl' # or plain
     }
 }

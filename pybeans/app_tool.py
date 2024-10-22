@@ -192,12 +192,19 @@ Env var: Ex. a.b             -> APP_A
             else:   # Ex. 'Henry TIAN <chariothy@gmail.com>'
                 to_addrs = mailDest
 
+            if smtp['type'] == 'ssl':
+                import ssl
+                secure = (ssl.create_default_context(), )
+            else:
+                secure = ()
             mail_handler = MySMTPHandler(
                     mailhost = (smtp['host'], smtp['port']),
                     fromaddr = mail.get('from'),
                     toaddrs = to_addrs,
                     subject = '%(name)s - %(levelname)s - %(message)s',
-                    credentials = (smtp['user'], smtp['pwd']))
+                    credentials = (smtp['user'], smtp['pwd']),
+                    secure = secure
+                )
             mail_handler.setLevel(logging.ERROR)
             logger.addHandler(mail_handler)
 

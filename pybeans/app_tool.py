@@ -20,6 +20,14 @@ from .ColorfulFormatter import ColorfulFormatter
 
 
 class MySMTPHandler(handlers.SMTPHandler):
+    def __init__(self, mailhost, fromaddr, toaddrs, subject,
+                 credentials=None, secure=None, timeout=5.0, use_ssl=True, time_interval=0):
+        super().__init__(mailhost, fromaddr, toaddrs, subject,
+                         credentials, secure, timeout)
+        self._use_ssl = use_ssl
+        self._time_interval = time_interval
+        self._msg_map = dict()  # 是一个内容为键时间为值得映射
+        
     def getSubject(self, record):
         #all_formatter = logging.Formatter(fmt='%(name)s - %(levelno)s - %(levelname)s - %(pathname)s - %(filename)s - %(module)s - %(lineno)d - %(funcName)s - %(created)f - %(asctime)s - %(msecs)d  %(relativeCreated)d - %(thread)d -  %(threadName)s -  %(process)d - %(message)s ')        
         #print('Ex. >>> ',all_formatter.formatMessage(record))
@@ -31,6 +39,40 @@ class MySMTPHandler(handlers.SMTPHandler):
         record.message = record.msg # To be compatible with Python 3.10 to avoid KeyError in formatMessage
         return formatter.formatMessage(record)
 
+    def emit(self, record: logging.LogRecord):
+        """
+        支持多线程
+        """
+        from threading import Thread
+        if sys.getsizeof(self._msg_map) > 10 * 1000 * 1000:
+            self._msg_map.clear()
+        Thread(target=self.__emit, args=(record,)).start()
+        
+    def __emit(self, record):
+        '''
+        支持ssl
+        避免频繁发送相同内容的邮件
+        '''
+        if record.msg not in self._msg_map or time.time() - self._msg_map[record.msg] > self._time_interval:
+            try:
+                smtp = {
+                    'host': self.mailhost,
+                    'port': self.mailport,
+                    'user': self.username,
+                    'pwd': self.password,
+                    'type': 'ssl' if self._use_ssl else 'plain'
+                }
+                send_email(from_addr=self.fromaddr
+                    , to_addrs=','.join(self.toaddrs)
+                    , subject=self.getSubject(record)
+                    , text_body=self.format(record)
+                    , smtp_config=smtp
+                )
+                self._msg_map[record.msg] = time.time()
+            except Exception:
+                self.handleError(record)
+        else:
+            pass
 
 class AppTool(object):
     def __init__(self, app_name: str, app_path: str='', local_config_dir: str='', config_name: str='config', ignore_env:bool=False):
@@ -192,18 +234,12 @@ Env var: Ex. a.b             -> APP_A
             else:   # Ex. 'Henry TIAN <chariothy@gmail.com>'
                 to_addrs = mailDest
 
-            if smtp['type'] == 'ssl':
-                import ssl
-                secure = (ssl.create_default_context(), )
-            else:
-                secure = ()
             mail_handler = MySMTPHandler(
                     mailhost = (smtp['host'], smtp['port']),
                     fromaddr = mail.get('from'),
                     toaddrs = to_addrs,
                     subject = '%(name)s - %(levelname)s - %(message)s',
                     credentials = (smtp['user'], smtp['pwd']),
-                    secure = secure
                 )
             mail_handler.setLevel(logging.ERROR)
             logger.addHandler(mail_handler)

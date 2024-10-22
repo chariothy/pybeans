@@ -11,7 +11,12 @@ def test_retry():
 
 try:
     test_retry()
+except Exception as ex:
+    app.debug(ex)
+
+try:
+    test_retry1()
 except Exception:
-    print('test_retry done.')
+    app.error('Test failed')
 
 app.ding('title', 'body')

@@ -2,30 +2,34 @@ from os import environ as env
 
 CONFIG = {
     'log': {
-        'level': 'DEBUG',   # 与log库的level一致，包括DEBUG, INFO, ERROR
+        'level': env.get('LOG_LEVEL', 'DEBUG'),   # DEBUG, INFO, ERROR
                             #   DEBUG   - Enable stdout, file, mail （如果在dest中启用）
                             #   INFO    - Enable file, mail         （如果在dest中启用）
                             #   ERROR   - Enable mail               （如果在dest中启用）
         'dest': {
             'stdout': True, # None: disabled,
-            'file': './logs/app.log',   # None: disabled, 
-                                        # PATH: log file path, 
-                                        # '': Default path under ./logs/
-            'syslog': ('10.8.0.2', 514),    # None: disabled, or (ip, port)
-            'mail': 'Henry TIAN <6314849@qq.com>'   # None: disabled,
-                                                    # MAIL: send to
-                                                    # '': use setting ['mail']['to']
+            'file': '',     # None: disabled, 
+                            # PATH: log file path, 
+                            # '': Default path under ./logs/
+            'syslog': None, # None: disabled, or (ip, port) Ex. ('10.8.0.2', 514)
+            'mail': ''      # None: disabled,
+                            # MAIL: send to
+                            # '': use setting ['mail']['from']
         }
     },
     'mail': {
-        'from': 'Henry TIAN <chariothy@gmail.com>',
-        'to': 'Henry TIAN <chariothy@gmail.com>,Henry TIAN <6314849@qq.com>'
+        'from': env.get('MAIL_FROM', 'Henry TIAN <chariothy@gmail.com>')
     },
     'smtp': {
-        'host': 'smtp.gmail.com',
-        'port': 25,
-        'user': 'chariothy@gmail.com',
-        'pwd': '123456'
+        'host': env.get('SMTP_HOST', 'smtp.gmail.com'),
+        'port': env.get('SMTP_PORT', 465),
+        'user': env.get('SMTP_USER', 'chariothy@gmail.com'),
+        'pwd': env.get('SMTP_PWD', '123456'),
+        'type': env.get('SMTP_TYPE', 'ssl')
+    },
+    'dingtalk': {                       # 通过钉钉机器人发送通知，具体请见钉钉机器人文档
+        'token': env.get('DINGTALK_TOKEN', ''),
+        'secret' : env.get('DINGTALK_SECRET', '') # 钉钉机器人的三种验证方式之一为密钥验证
     },
     'demo': {
         'host': env.get('DEMO_HOST', 'smtp.gmail.com'),

@@ -169,16 +169,20 @@ Env var: Ex. a.b             -> APP_A
         sys.path.append(self._app_path)
         try:
             self._config = __import__(config_name).CONFIG
-        except Exception:
+        except ModuleNotFoundError:
             self._config = {}
+        except Exception as ex:
+            raise ex
         
         config_local_path = path.join(self._app_path, local_config_dir)
         sys.path.append(config_local_path)
         try:
             config_local = __import__(config_name + '_local').CONFIG
             self._config = deep_merge(self._config, config_local)
-        except Exception:
+        except ModuleNotFoundError:
             pass
+        except Exception as ex:
+            raise ex
         
         regular_app_name = re.sub(r'\W+', '_', self._app_name.upper())
         env_key = regular_app_name + '_ENV'        
@@ -188,8 +192,10 @@ Env var: Ex. a.b             -> APP_A
             try:
                 config_test = __import__(config_name + f'_{env}').CONFIG
                 self._config = deep_merge(self._config, config_test)
-            except Exception:
+            except ModuleNotFoundError:
                 pass
+            except Exception as ex:
+                raise ex
         
         return self._config
 

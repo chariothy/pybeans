@@ -1,4 +1,5 @@
 import logging, json
+from collections.abc import Iterable
 from colorama import Fore, Back, Style
 
 class ColorfulFormatter(logging.Formatter):
@@ -14,7 +15,7 @@ class ColorfulFormatter(logging.Formatter):
     }
 
     def format(self, record):
-        if isinstance(record.msg, dict):
+        if isinstance(record.msg, Iterable) and not isinstance(record.msg, str):
             record.msg = json.dumps(record.msg, indent=4, ensure_ascii=False)
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt)

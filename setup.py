@@ -12,7 +12,7 @@ PACKAGES = ['pybeans']
 URL = 'https://github.com/chariothy/pybeans.git'
 EMAIL = 'chariothy@gmail.com'
 AUTHOR = 'Henry TIAN'
-VERSION = '1.12.4'
+VERSION = '1.13.0'
 
 LONG_DESCRIPTION = '''
 This is a helper which includes common methods and classes.
@@ -21,8 +21,9 @@ This is a helper which includes common methods and classes.
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    "colorama>=0.4.4",
-    "requests>=2.32.0"
+    "colorama>=0.4.4",  ## for log stdout and stderr
+    "requests>=2.32.0", ## for ding
+    "munch>=4.0.0"      ## for dot get config
 ]
 
 # The rest you shouldn't have to touch too much :)

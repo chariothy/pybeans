@@ -18,6 +18,8 @@ class CoreTestCase(unittest.TestCase):
         #print(self.APP.config)
         #print(env)
 
+    def tearDown(self):
+        del env['TEST_ING_ENV']
     
     def test_get_config(self):
         """
@@ -31,9 +33,6 @@ class CoreTestCase(unittest.TestCase):
         self.assertEqual(CONFIG_DEV['log']['level'], self.APP['log.level'])
         self.assertEqual(CONFIG_DEV['log']['dest']['file'], self.APP['log.dest.file'])
         
-        self.APP = AppTool(self.APP_NAME, os.getcwd()) ## Reload config for env.
-        self.assertEqual(self.APP['demo.host'], 'smtp.gmail.com')
-
 
 class CoreEnvTestCase(unittest.TestCase):
     def setUp(self):
@@ -44,6 +43,8 @@ class CoreEnvTestCase(unittest.TestCase):
         #print(self.APP.config)
         #print(env)
 
+    def tearDown(self):
+        del env['DEMO_HOST']
 
     def test_get_env_config(self):
         """

@@ -145,7 +145,7 @@ def send_email(from_addr: str, to_addrs: str, subject: str, text_body: str = '' 
 
     if send_to_file:
         if not email_file_dir:
-            email_file_dir = os.path.join(os.getcwd(), 'logs')
+            email_file_dir = os.path.join(os.getcwd(), '.logs')
         if not os.path.exists(email_file_dir):
             os.mkdir(email_file_dir)
 
@@ -288,6 +288,7 @@ def get_win_folder(name):
     return get_win_folder(name)
 
 
+@deprecated
 def get(dictionary: dict, key: str, default=None, check: bool = False, replacement_for_dot_in_key: str = None):
     """Get value in dictionary, keys are connected by dot, and use environment value if exists
     Get dictionary value, 

@@ -8,13 +8,14 @@ import time
 import re, json
 import traceback
 import requests
-from .utils import now, create_sign_for_dingtalk
+from munch import Munch
 
 from pprint import pformat
 from colorama import Fore, Back, init, Style
 init()
 
-from .utils import deep_merge, send_email, get, cast
+from .utils import now, create_sign_for_dingtalk
+from .utils import deep_merge, send_email, get, cast, deprecated
 from .exception import AppToolError
 from .ColorfulFormatter import ColorfulFormatter
 
@@ -79,6 +80,7 @@ class AppTool(object):
         self._app_name = app_name
         self._app_path = app_path if app_path else os.getcwd()
         self._config = {}
+        self._config_obj = None
         self._logger = None
 
         self.load_config(local_config_dir, config_name)
@@ -92,7 +94,7 @@ class AppTool(object):
 
     @property
     def config(self):
-        return self._config
+        return self._config_obj
 
 
     @property
@@ -100,6 +102,7 @@ class AppTool(object):
         return self._logger
 
 
+    @deprecated
     def _use_env_var(self, config: dict, parent_key: str) -> dict:
         """Replace config variable with env
 
@@ -167,10 +170,11 @@ Env var: Ex. a.b             -> APP_A
         assert(type(local_config_dir) == str)
 
         sys.path.append(self._app_path)
+        config = {}
         try:
-            self._config = __import__(config_name).CONFIG
+            config = __import__(config_name).CONFIG
         except ModuleNotFoundError:
-            self._config = {}
+            config = {}
         except Exception as ex:
             raise ex
         
@@ -178,7 +182,7 @@ Env var: Ex. a.b             -> APP_A
         sys.path.append(config_local_path)
         try:
             config_local = __import__(config_name + '_local').CONFIG
-            self._config = deep_merge(self._config, config_local)
+            config = deep_merge(config, config_local)
         except ModuleNotFoundError:
             pass
         except Exception as ex:
@@ -191,12 +195,14 @@ Env var: Ex. a.b             -> APP_A
         if env:
             try:
                 config_test = __import__(config_name + f'_{env}').CONFIG
-                self._config = deep_merge(self._config, config_test)
+                config = deep_merge(config, config_test)
             except ModuleNotFoundError:
                 pass
             except Exception as ex:
                 raise ex
         
+        self._config = config
+        self._config_obj = Munch.fromDict(config)
         return self._config
 
 
@@ -220,7 +226,7 @@ Env var: Ex. a.b             -> APP_A
         fileDest = logDst.get('file')
         if fileDest is not None:
             if not fileDest: # Empty
-                logs_path = path.join(self._app_path, 'logs')
+                logs_path = path.join(self._app_path, '.logs')
                 if not os.path.exists(logs_path):
                     os.mkdir(logs_path)
                 regular_log_name = re.sub(r'\W+', '_', self._app_name.lower())
@@ -448,9 +454,9 @@ Env var: Ex. a.b             -> APP_A
         return decorator
 
 
+
     def get(self, key:str, default=None, check:bool=False, replacement_for_dot_in_key:str='#'):
         return get(self._config, key, default, check, replacement_for_dot_in_key)
-
 
     def __getitem__(self, key):
         return self.get(key, replacement_for_dot_in_key='#', check=True)

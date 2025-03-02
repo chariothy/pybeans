@@ -133,6 +133,15 @@ class CoreTestCase(unittest.TestCase):
         
         self.assertEqual(CONFIG_LOCAL['log']['level'], self.APP['log.level'])
 
+    def test_dot_config(self):
+        """
+        docstring
+        """
+        self.assertEqual(CONFIG['mail']['from'], self.APP.config.mail['from'])
+        self.assertEqual(CONFIG['demo.key2']['from'][0], self.APP.config.key2['from'][0])
+        self.assertEqual(CONFIG['demo']['host'], self.APP.config.demo.host)
+        self.assertEqual(CONFIG_LOCAL['log']['level'], self.APP.config.log.level)
+
     def test_send_text_email(self):
         """
         docstring

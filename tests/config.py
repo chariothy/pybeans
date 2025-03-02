@@ -10,7 +10,7 @@ CONFIG = {
             'stdout': True, # None: disabled,
             'file': '',     # None: disabled, 
                             # PATH: log file path, 
-                            # '': Default path under ./logs/
+                            # '': Default path under ./.logs/
             'syslog': None, # None: disabled, or (ip, port) Ex. ('10.8.0.2', 514)
             'mail': ''      # None: disabled,
                             # MAIL: send to
@@ -18,7 +18,8 @@ CONFIG = {
         }
     },
     'mail': {
-        'from': env.get('MAIL_FROM', 'Henry TIAN <chariothy@gmail.com>')
+        'from': env.get('MAIL_FROM', 'Henry TIAN <chariothy@gmail.com>'),
+        'to': env.get('MAIL_TO', 'Henry TIAN <chariothy@gmail.com>')
     },
     'smtp': {
         'host': env.get('SMTP_HOST', 'smtp.gmail.com'),
@@ -40,6 +41,10 @@ CONFIG = {
         'to': [['Henry TIAN', 'chariothy@gmail.com']]
     },
     'demo.key2': {
+        'from': ['Henry TIAN', 'chariothy@gmail.com'],
+        'to': [['Henry TIAN', 'chariothy@gmail.com']]
+    },
+    'key2': {
         'from': ['Henry TIAN', 'chariothy@gmail.com'],
         'to': [['Henry TIAN', 'chariothy@gmail.com']]
     }

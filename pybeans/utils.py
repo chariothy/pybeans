@@ -699,3 +699,30 @@ def help():
             signature = inspect.signature(obj)
             params = [str(param) for param in signature.parameters.values()]
             print(f"Function: {name}, Parameters: {', '.join(params)}")
+            
+def get_cached_file(file_path, cache_time=3600, clear_cache=False):
+    """
+    检查缓存文件是否有效
+    
+    :param file_name: 目标文件名
+    :param cache_dir: 缓存目录(默认当前目录下的.cache)
+    :param cache_time: 有效期秒数(默认3600秒)
+    :return: 有效返回完整文件路径，否则返回None
+    """
+   
+    # 检查文件是否存在
+    if not os.path.exists(file_path):
+        return None
+    
+    # 获取文件修改时间和当前时间
+    last_modified = os.path.getmtime(file_path)
+    current_time = time.time()
+    
+    # 检查是否在有效期内
+    if (current_time - last_modified) > cache_time:
+        if clear_cache:
+            os.remove(file_path)
+        return None
+    
+    # 返回绝对路径
+    return os.path.abspath(file_path)

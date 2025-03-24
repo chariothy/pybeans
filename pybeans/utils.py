@@ -288,7 +288,6 @@ def get_win_folder(name):
     return get_win_folder(name)
 
 
-@deprecated
 def get(dictionary: dict, key: str, default=None, check: bool = False, replacement_for_dot_in_key: str = None):
     """Get value in dictionary, keys are connected by dot, and use environment value if exists
     Get dictionary value, 

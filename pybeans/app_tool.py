@@ -27,7 +27,7 @@ class MySMTPHandler(handlers.SMTPHandler):
                          credentials, secure, timeout)
         self._use_ssl = use_ssl
         self._time_interval = time_interval
-        self._msg_map = dict()  # 是一个内容为键时间为值得映射
+        self._msg_map = dict()  # 是一个内容为键时间为值的映射
         
     def getSubject(self, record):
         #all_formatter = logging.Formatter(fmt='%(name)s - %(levelno)s - %(levelname)s - %(pathname)s - %(filename)s - %(module)s - %(lineno)d - %(funcName)s - %(created)f - %(asctime)s - %(msecs)d  %(relativeCreated)d - %(thread)d -  %(threadName)s -  %(process)d - %(message)s ')        

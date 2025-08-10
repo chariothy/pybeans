@@ -448,7 +448,7 @@ Env var: Ex. a.b             -> APP_A
                             self.debug(f"Attempt {attempt + 1} failed due to {type(e).__name__}: {e}. Retrying...")
                             time.sleep(delay)
                         else:
-                            self.debug(f"Attempt {attempt + 1} failed due to {type(e).__name__}: {e}. No more retries.")
+                            self.warn(f"Attempt {attempt + 1} failed due to {type(e).__name__}: {e}. No more retries.")
                             raise  # Re-raise the exception after the last attempt
             return wrapper
         return decorator

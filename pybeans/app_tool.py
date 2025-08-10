@@ -445,10 +445,10 @@ Env var: Ex. a.b             -> APP_A
                         return func(*args, **kwargs)
                     except error as e:
                         if attempt < n - 1:  # Only log if not the last attempt
-                            self.debug(f"Attempt {attempt + 1} failed: {e}. Retrying...")
+                            self.debug(f"Attempt {attempt + 1} failed due to {type(e).__name__}: {e}. Retrying...")
                             time.sleep(delay)
                         else:
-                            self.debug(f"Attempt {attempt + 1} failed: {e}. No more retries.")
+                            self.debug(f"Attempt {attempt + 1} failed due to {type(e).__name__}: {e}. No more retries.")
                             raise  # Re-raise the exception after the last attempt
             return wrapper
         return decorator
